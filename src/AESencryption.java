@@ -1,6 +1,7 @@
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.util.Base64;
 import java.util.Scanner;
@@ -113,6 +114,55 @@ public class AESencryption {
         } catch (Exception e) {
             // Handle other exceptions during encryption
             System.out.println("Error during encryption: " + e.getMessage());
+        }
+    }
+
+    // Method to handle file decryption
+    private static void decryptFile(Scanner sc) {
+        try {
+            // Ask the user to provide a file to decrypt
+            System.out.print("Enter the filename to decrypt: ");
+            String filename = sc.nextLine().trim();
+
+            File file = new File(filename);
+            if (!file.exists()) {  // Check if the file exists
+                System.out.println("Error: File does not exist.");
+                return;
+            }
+
+            // Ask the user to enter the encryption key yh
+            System.out.print("Enter the decryption key: ");
+            String encodedKey = sc.nextLine().trim();
+
+            // Decode the provided key from Base64 format
+            byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+            SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+
+            // Decrypt the file data using the provided AES key
+            byte[] fileData = readFile(file);  // Read file data as a byte array
+            byte[] decryptedData = decryptData(fileData, secretKey);  // Decrypt the data
+
+            // Ask the user for the output filename for decrypted data
+            System.out.print("Enter the output filename for decrypted data: ");
+            String outputFileName = sc.nextLine().trim();
+
+            // Write the decrypted data to the specified output file
+            try (FileOutputStream fos = new FileOutputStream(outputFileName)) {
+                fos.write(decryptedData);
+            }
+
+            // Display success message to the user
+            System.out.println("\nDecryption complete.");
+            System.out.println("Decrypted data has been written to '" + outputFileName + "'.");
+        } catch (IllegalArgumentException e) {
+            // Handle invalid key format during decryption
+            System.out.println("Error: Invalid key format. Please ensure the key is correct.");
+        } catch (IOException e) {
+            // Handle input/output exceptions during decryption
+            System.out.println("Error: Unable to read or write file. " + e.getMessage());
+        } catch (Exception e) {
+            // Handle other exceptions during decryption
+            System.out.println("Error during decryption: " + e.getMessage());
         }
     }
 
