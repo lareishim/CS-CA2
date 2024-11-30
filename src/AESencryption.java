@@ -41,10 +41,10 @@ public class AESencryption {
                 // Perform actions based on user's choice
                 switch (choice) {
                     case 1:
-                        //encryptFile(sc);  // Call the encryption method if user chooses 1
+                        encryptFile(sc);  // Call the encryption method if user chooses 1
                         break;
                     case 2:
-                        //decryptFile(sc);  // Call the decryption method if user chooses 2
+                        decryptFile(sc);  // Call the decryption method if user chooses 2
                         break;
                     case 3:
                         exit = true;  // Exit the program if user chooses 3
