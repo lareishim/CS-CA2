@@ -1,9 +1,8 @@
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Base64;
 import java.util.Scanner;
 
 public class AESencryption {
@@ -61,6 +60,59 @@ public class AESencryption {
                 // Catch any unexpected errors
                 System.out.println("An unexpected error occurred: " + e.getMessage());
             }
+        }
+    }
+
+    // Method to handle file encryption
+    private static void encryptFile(Scanner sc) {
+        try {
+            // Ask the user to provide a file to encrypt
+            System.out.print("Enter the filename to encrypt: ");
+            String filename = sc.nextLine().trim();
+
+            File file = new File(filename);
+            if (!file.exists()) {  // Check if the file exists
+                System.out.println("Error: File does not exist.");
+                return;
+            }
+
+            //Got AES Key code from online
+            // Generate a random AES key for encryption
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128);  // Use AES-128 encryption (can change to AES-192 or AES-256)
+            SecretKey secretKey = keyGen.generateKey();
+            // Encode the key in Base64 format
+            String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+
+            // Encrypt the file data using the generated AES key
+            byte[] fileData = readFile(file);  // Read file data as a byte array
+            byte[] encryptedData = encryptData(fileData, secretKey);  // Encrypt the data
+
+            // Ask the user for the output filename for encrypted data
+            System.out.print("Enter the output filename for encrypted data: ");
+            String outputFileName = sc.nextLine().trim();
+
+            // Write the encrypted data to the specified output file
+            try (FileOutputStream fos = new FileOutputStream(outputFileName)) {
+                fos.write(encryptedData);
+            }
+
+            // Save the encryption key to a separate file (key.txt)
+            try (FileWriter keyFile = new FileWriter("key.txt")) {
+                keyFile.write(encodedKey);
+            }
+
+            // Display success messages to the user
+            System.out.println("\nEncryption complete.");
+            System.out.println("Encryption Key: " + encodedKey);
+            System.out.println("Encrypted data has been written to '" + outputFileName + "'.");
+            System.out.println("Encryption key has been saved to 'key.txt'.");
+        } catch (IOException e) {
+            // Handle any input/output exceptions
+            System.out.println("Error: Unable to read or write file. " + e.getMessage());
+        } catch (Exception e) {
+            // Handle other exceptions during encryption
+            System.out.println("Error during encryption: " + e.getMessage());
         }
     }
 
