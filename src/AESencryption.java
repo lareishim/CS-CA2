@@ -1,6 +1,13 @@
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import java.util.Scanner;
 
 public class AESencryption {
+
+    // REFERENCES ( I RESEARCHED ONLINE TO AID MY PROJECT )
+    // https://www.baeldung.com/java-aes-encryption-decryption
+    // https://www.javacodegeeks.com/
+    // https://www.geeksforgeeks.org/what-is-java-aes-encryption-and-decryption/
 
     static Scanner sc = new Scanner(System.in);
 
@@ -51,5 +58,19 @@ public class AESencryption {
                 System.out.println("An unexpected error occurred: " + e.getMessage());
             }
         }
+    }
+
+    // Method to encrypt the file data using the provided AES key
+    private static byte[] encryptData(byte[] data, SecretKey key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");  // Create an AES cipher instance
+        cipher.init(Cipher.ENCRYPT_MODE, key);  // Initialize the cipher in encryption mode
+        return cipher.doFinal(data);  // Perform the encryption and return the encrypted data
+    }
+
+    // Method to decrypt the file data using the provided AES key
+    private static byte[] decryptData(byte[] data, SecretKey key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");  // Create an AES cipher instance
+        cipher.init(Cipher.DECRYPT_MODE, key);  // Initialize the cipher in decryption mode
+        return cipher.doFinal(data);  // Perform the decryption and return the decrypted data
     }
 }
