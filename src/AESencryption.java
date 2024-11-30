@@ -1,5 +1,9 @@
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class AESencryption {
@@ -72,5 +76,22 @@ public class AESencryption {
         Cipher cipher = Cipher.getInstance("AES");  // Create an AES cipher instance
         cipher.init(Cipher.DECRYPT_MODE, key);  // Initialize the cipher in decryption mode
         return cipher.doFinal(data);  // Perform the decryption and return the decrypted data
+    }
+
+    // Method to read the file data as a byte array
+    private static byte[] readFile(File file) throws IOException {
+        try (FileInputStream f = new FileInputStream(file)) {
+            // Create a buffer (4KB size) to read the file in chunks
+            byte[] buffer = new byte[4096];  // Buffer size of 4KB
+            int bytesRead;  // Variable to store the number of bytes read
+            ByteArrayOutputStream b = new ByteArrayOutputStream();  // To accumulate the file content
+            // Read the file in chunks until the end of the file (EOF) is reached
+            while ((bytesRead = f.read(buffer)) != -1) {
+                // Write the read bytes to the ByteArrayOutputStream
+                b.write(buffer, 0, bytesRead);
+            }
+            // Convert the accumulated data in the ByteArrayOutputStream to a byte array
+            return b.toByteArray();  // Return the file content as a byte array
+        }
     }
 }
